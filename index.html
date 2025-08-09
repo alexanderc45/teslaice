@@ -272,11 +272,23 @@
                     <div class="accel-label">Acceleration (m/s²)</div>
                 </div>
 
+                <div class="acceleration-display">
+                    <div class="accel-value" id="speedValue">0</div>
+                    <div class="accel-label">Speed (mph)</div>
+                </div>
+
                 <div class="rpm-display">
                     <div class="rpm-gauge">
                         <div class="rpm-value" id="rpmValue">800</div>
                     </div>
                     <div class="rpm-label">Engine RPM</div>
+                </div>
+
+                <div class="rpm-display">
+                    <div class="rpm-gauge" style="background: conic-gradient(from 0deg, #4ecdc4 0deg, #45b7aa 30deg, #ff6b6b 60deg, #d63031 90deg);">
+                        <div class="rpm-value" id="gearValue">1</div>
+                    </div>
+                    <div class="rpm-label">Current Gear</div>
                 </div>
             </div>
 
@@ -285,11 +297,11 @@
                     <div class="control-group">
                         <label class="control-label">Engine Type</label>
                         <select id="engineType">
-                            <option value="v8">V8 Muscle Car</option>
-                            <option value="v6">V6 Sports Car</option>
-                            <option value="i4turbo">Turbo 4-Cylinder</option>
-                            <option value="motorcycle">Motorcycle</option>
-                            <option value="diesel">Diesel Truck</option>
+                            <option value="v8">V8 Muscle Car (Auto)</option>
+                            <option value="v6">V6 Sports Car (Manual)</option>
+                            <option value="i4turbo">Turbo 4-Cylinder (Auto)</option>
+                            <option value="motorcycle">Motorcycle (Manual)</option>
+                            <option value="diesel">Diesel Truck (Manual)</option>
                         </select>
                     </div>
 
@@ -327,6 +339,38 @@
                 this.lastAcceleration = [0, 0, 0];
                 this.smoothedAccel = 0;
                 
+                // Speed and transmission tracking
+                this.currentSpeed = 0; // mph
+                this.speedHistory = [];
+                this.currentGear = 1;
+                this.lastShiftTime = 0;
+                this.isShifting = false;
+                this.shiftDuration = 200; // ms
+                
+                // Gear ratios and shift points for different transmissions
+                this.transmissionConfigs = {
+                    manual6: {
+                        gears: [3.36, 2.07, 1.35, 1.0, 0.75, 0.62],
+                        shiftRPM: [6000, 6200, 6400, 6500, 6600, 7000],
+                        downshiftRPM: [2000, 2200, 2400, 2600, 2800, 3000]
+                    },
+                    auto8: {
+                        gears: [4.71, 3.14, 2.10, 1.67, 1.29, 1.0, 0.84, 0.67],
+                        shiftRPM: [5500, 5700, 5900, 6000, 6100, 6200, 6300, 6500],
+                        downshiftRPM: [1800, 2000, 2200, 2400, 2600, 2800, 3000, 3200]
+                    },
+                    motorcycle6: {
+                        gears: [2.92, 2.06, 1.63, 1.35, 1.17, 1.04],
+                        shiftRPM: [8000, 8500, 9000, 9500, 10000, 10500],
+                        downshiftRPM: [3000, 3500, 4000, 4500, 5000, 5500]
+                    },
+                    truck6: {
+                        gears: [5.79, 3.04, 1.99, 1.44, 1.0, 0.73],
+                        shiftRPM: [2200, 2400, 2600, 2800, 3000, 3200],
+                        downshiftRPM: [1200, 1400, 1600, 1800, 2000, 2200]
+                    }
+                };
+                
                 this.initializeElements();
                 this.createVisualizationBars();
                 this.setupEventListeners();
@@ -344,7 +388,9 @@
                     sensitivitySlider: document.getElementById('sensitivitySlider'),
                     volumeDisplay: document.getElementById('volumeDisplay'),
                     sensitivityDisplay: document.getElementById('sensitivityDisplay'),
-                    waveBars: document.getElementById('waveBars')
+                    waveBars: document.getElementById('waveBars'),
+                    speedValue: document.getElementById('speedValue'),
+                    gearValue: document.getElementById('gearValue')
                 };
             }
 
@@ -472,27 +518,37 @@
                     v8: {
                         frequencies: [120, 240, 360, 480],
                         waveforms: ['sawtooth', 'square', 'triangle', 'sine'],
-                        gains: [0.15, 0.1, 0.05, 0.03]
+                        gains: [0.15, 0.1, 0.05, 0.03],
+                        transmission: 'auto8',
+                        finalDrive: 3.23
                     },
                     v6: {
                         frequencies: [150, 300, 450],
                         waveforms: ['sawtooth', 'triangle', 'sine'],
-                        gains: [0.12, 0.08, 0.04]
+                        gains: [0.12, 0.08, 0.04],
+                        transmission: 'manual6',
+                        finalDrive: 3.90
                     },
                     i4turbo: {
                         frequencies: [180, 360, 540],
                         waveforms: ['square', 'sawtooth', 'triangle'],
-                        gains: [0.1, 0.12, 0.06]
+                        gains: [0.1, 0.12, 0.06],
+                        transmission: 'auto8',
+                        finalDrive: 3.55
                     },
                     motorcycle: {
                         frequencies: [200, 400, 800, 1200],
                         waveforms: ['sawtooth', 'square', 'triangle', 'sine'],
-                        gains: [0.2, 0.15, 0.08, 0.04]
+                        gains: [0.2, 0.15, 0.08, 0.04],
+                        transmission: 'motorcycle6',
+                        finalDrive: 2.65
                     },
                     diesel: {
                         frequencies: [80, 160, 240],
                         waveforms: ['square', 'sawtooth', 'triangle'],
-                        gains: [0.18, 0.12, 0.06]
+                        gains: [0.18, 0.12, 0.06],
+                        transmission: 'truck6',
+                        finalDrive: 4.10
                     }
                 };
                 
@@ -527,20 +583,140 @@
                 const sensitivity = parseInt(this.elements.sensitivitySlider.value);
                 this.acceleration *= sensitivity * 0.5;
                 
-                // Calculate target RPM based on acceleration
-                this.calculateTargetRPM();
+                // Calculate speed based on acceleration integration
+                this.updateSpeed();
+                
+                // Calculate target RPM based on speed, gear, and acceleration
+                this.calculateTransmissionState();
             }
 
-            calculateTargetRPM() {
-                const baseRPM = 800;
-                const maxRPM = 6000;
+            updateSpeed() {
+                // Simple speed integration from acceleration
+                // Convert m/s² to mph change per frame (rough approximation)
+                const accelMph = this.acceleration * 2.237; // m/s to mph conversion factor
+                const timeStep = 0.1; // assume ~100ms between updates
                 
-                // Map acceleration to RPM (more aggressive scaling)
-                const rpmIncrease = Math.min(this.acceleration * 400, maxRPM - baseRPM);
-                this.targetRPM = baseRPM + rpmIncrease;
+                // Update speed based on net acceleration (forward/backward)
+                this.currentSpeed += accelMph * timeStep;
                 
-                // Ensure minimum idle RPM
-                this.targetRPM = Math.max(this.targetRPM, baseRPM);
+                // Natural speed decay when not accelerating (friction/air resistance)
+                if (Math.abs(this.acceleration) < 0.5) {
+                    this.currentSpeed *= 0.99;
+                }
+                
+                // Keep speed realistic bounds
+                this.currentSpeed = Math.max(0, Math.min(this.currentSpeed, 200));
+                
+                // Smooth speed history for gear shift decisions
+                this.speedHistory.push(this.currentSpeed);
+                if (this.speedHistory.length > 10) {
+                    this.speedHistory.shift();
+                }
+            }
+
+            calculateTransmissionState() {
+                const engineConfig = this.getEngineConfig();
+                const transmission = this.transmissionConfigs[engineConfig.transmission];
+                const currentTime = Date.now();
+                
+                // Don't shift if we're already in the middle of a shift
+                if (this.isShifting && currentTime - this.lastShiftTime < this.shiftDuration) {
+                    return;
+                }
+                
+                if (this.isShifting && currentTime - this.lastShiftTime >= this.shiftDuration) {
+                    this.isShifting = false;
+                }
+                
+                // Calculate engine RPM from speed and current gear
+                this.calculateEngineRPM(engineConfig, transmission);
+                
+                // Check for gear shifts
+                this.checkGearShifts(transmission, currentTime);
+            }
+
+            calculateEngineRPM(engineConfig, transmission) {
+                if (this.currentSpeed < 1) {
+                    // Idle RPM when stopped
+                    this.targetRPM = 800;
+                    return;
+                }
+                
+                // Calculate wheel RPM from speed
+                // Assuming 26" diameter wheels (typical car tire)
+                const wheelCircumference = 26 * Math.PI / 12; // feet
+                const wheelRPM = (this.currentSpeed * 5280) / (wheelCircumference * 60); // convert mph to wheel RPM
+                
+                // Calculate engine RPM through transmission
+                const gearRatio = transmission.gears[this.currentGear - 1];
+                const finalDriveRatio = engineConfig.finalDrive;
+                
+                let calculatedRPM = wheelRPM * gearRatio * finalDriveRatio;
+                
+                // Add RPM for acceleration (like pressing gas pedal)
+                if (this.acceleration > 1) {
+                    calculatedRPM += (this.acceleration - 1) * 500;
+                }
+                
+                // Keep RPM in realistic bounds
+                this.targetRPM = Math.max(800, Math.min(calculatedRPM, 8000));
+            }
+
+            checkGearShifts(transmission, currentTime) {
+                // Don't shift too frequently
+                if (currentTime - this.lastShiftTime < 1000) return;
+                
+                const upshiftRPM = transmission.shiftRPM[this.currentGear - 1];
+                const downshiftRPM = transmission.downshiftRPM[this.currentGear - 1];
+                
+                // Upshift conditions
+                if (this.currentGear < transmission.gears.length && 
+                    this.currentRPM > upshiftRPM && 
+                    this.acceleration > 0.5) {
+                    
+                    this.shiftUp(currentTime);
+                }
+                // Downshift conditions
+                else if (this.currentGear > 1 && 
+                         (this.currentRPM < downshiftRPM || 
+                          (this.currentSpeed < 10 && this.currentGear > 2))) {
+                    
+                    this.shiftDown(currentTime);
+                }
+            }
+
+            shiftUp(currentTime) {
+                this.currentGear++;
+                this.lastShiftTime = currentTime;
+                this.isShifting = true;
+                
+                // Brief RPM drop during shift
+                this.currentRPM *= 0.6;
+                
+                // Update status
+                this.elements.status.textContent = `Shifted up to gear ${this.currentGear}`;
+                setTimeout(() => {
+                    if (this.isRunning) {
+                        this.elements.status.textContent = 'Engine running - monitoring acceleration';
+                    }
+                }, 1500);
+            }
+
+            shiftDown(currentTime) {
+                this.currentGear--;
+                this.lastShiftTime = currentTime;
+                this.isShifting = true;
+                
+                // RPM increase during downshift
+                this.currentRPM *= 1.4;
+                
+                // Update status
+                this.elements.status.textContent = `Shifted down to gear ${this.currentGear}`;
+                setTimeout(() => {
+                    if (this.isRunning) {
+                        this.elements.status.textContent = 'Engine running - monitoring acceleration';
+                    }
+                }, 1500);
             }
 
             updateAudioFrequencies() {
@@ -596,7 +772,9 @@
                 
                 // Update displays
                 this.elements.accelValue.textContent = this.acceleration.toFixed(1);
+                this.elements.speedValue.textContent = Math.round(this.currentSpeed);
                 this.elements.rpmValue.textContent = Math.round(this.currentRPM);
+                this.elements.gearValue.textContent = this.currentGear;
                 
                 if (this.isRunning) {
                     this.updateAudioFrequencies();
