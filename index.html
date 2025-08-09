@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tesla ICE Sound Simulator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            color: white;
+            height: 100vh;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .title {
+            font-size: 2.5em;
+            font-weight: bold;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .status {
+            color: #888;
+            font-size: 1.1em;
+        }
+
+        .main-content {
+            display: flex;
+            flex: 1;
+            gap: 30px;
+        }
+
+        .left-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .acceleration-display {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .accel-value {
+            font-size: 4em;
+            font-weight: bold;
+            color: #4ecdc4;
+            margin-bottom: 10px;
+        }
+
+        .accel-label {
+            font-size: 1.2em;
+            color: #ccc;
+        }
+
+        .rpm-display {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .rpm-gauge {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 20px;
+            position: relative;
+            border-radius: 50%;
+            background: conic-gradient(
+                from 0deg,
+                #4ecdc4 0deg,
+                #45b7aa 60deg,
+                #ff6b6b 120deg,
+                #d63031 180deg
+            );
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .rpm-gauge::before {
+            content: '';
+            width: 180px;
+            height: 180px;
+            background: #1a1a1a;
+            border-radius: 50%;
+            position: absolute;
+        }
+
+        .rpm-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            z-index: 1;
+            color: white;
+        }
+
+        .rpm-label {
+            font-size: 1.2em;
+            color: #ccc;
+        }
+
+        .right-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .controls {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        .control-label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        select, input[type="range"] {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: none;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 16px;
+        }
+
+        select option {
+            background: #2a2a2a;
+            color: white;
+        }
+
+        input[type="range"] {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.3);
+            outline: none;
+            padding: 0;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #4ecdc4;
+            cursor: pointer;
+        }
+
+        .value-display {
+            text-align: right;
+            color: #4ecdc4;
+            font-weight: bold;
+        }
+
+        .start-button {
+            background: linear-gradient(45deg, #4ecdc4, #45b7aa);
+            border: none;
+            border-radius: 15px;
+            padding: 20px 40px;
+            font-size: 1.3em;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .start-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(78, 205, 196, 0.3);
+        }
+
+        .start-button:active {
+            transform: translateY(0);
+        }
+
+        .start-button.active {
+            background: linear-gradient(45deg, #ff6b6b, #d63031);
+        }
+
+        .visualization {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+        }
+
+        .wave-bars {
+            display: flex;
+            justify-content: center;
+            align-items: end;
+            height: 100px;
+            gap: 3px;
+        }
+
+        .bar {
+            width: 8px;
+            background: linear-gradient(to top, #4ecdc4, #45b7aa);
+            border-radius: 4px 4px 0 0;
+            transition: height 0.1s ease;
+            min-height: 5px;
+        }
+
+        @media (max-width: 1200px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .title {
+                font-size: 2em;
+            }
+            
+            .accel-value {
+                font-size: 3em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">Tesla ICE Sound Simulator</h1>
+            <div class="status" id="status">Ready to start engine simulation</div>
+        </div>
+
+        <div class="main-content">
+            <div class="left-panel">
+                <div class="acceleration-display">
+                    <div class="accel-value" id="accelValue">0.0</div>
+                    <div class="accel-label">Acceleration (m/s²)</div>
+                </div>
+
+                <div class="rpm-display">
+                    <div class="rpm-gauge">
+                        <div class="rpm-value" id="rpmValue">800</div>
+                    </div>
+                    <div class="rpm-label">Engine RPM</div>
+                </div>
+            </div>
+
+            <div class="right-panel">
+                <div class="controls">
+                    <div class="control-group">
+                        <label class="control-label">Engine Type</label>
+                        <select id="engineType">
+                            <option value="v8">V8 Muscle Car</option>
+                            <option value="v6">V6 Sports Car</option>
+                            <option value="i4turbo">Turbo 4-Cylinder</option>
+                            <option value="motorcycle">Motorcycle</option>
+                            <option value="diesel">Diesel Truck</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label">Volume: <span class="value-display" id="volumeDisplay">70%</span></label>
+                        <input type="range" id="volumeSlider" min="0" max="100" value="70">
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label">Sensitivity: <span class="value-display" id="sensitivityDisplay">5</span></label>
+                        <input type="range" id="sensitivitySlider" min="1" max="10" value="5">
+                    </div>
+
+                    <button class="start-button" id="startButton">Start Engine</button>
+                </div>
+
+                <div class="visualization">
+                    <h3 style="margin-bottom: 15px;">Audio Visualization</h3>
+                    <div class="wave-bars" id="waveBars"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class TeslaICESoundSimulator {
+            constructor() {
+                this.isRunning = false;
+                this.audioContext = null;
+                this.oscillators = [];
+                this.gainNodes = [];
+                this.currentRPM = 800;
+                this.targetRPM = 800;
+                this.acceleration = 0;
+                this.lastAcceleration = [0, 0, 0];
+                this.smoothedAccel = 0;
+                
+                this.initializeElements();
+                this.createVisualizationBars();
+                this.setupEventListeners();
+                this.animationLoop();
+            }
+
+            initializeElements() {
+                this.elements = {
+                    startButton: document.getElementById('startButton'),
+                    status: document.getElementById('status'),
+                    accelValue: document.getElementById('accelValue'),
+                    rpmValue: document.getElementById('rpmValue'),
+                    engineType: document.getElementById('engineType'),
+                    volumeSlider: document.getElementById('volumeSlider'),
+                    sensitivitySlider: document.getElementById('sensitivitySlider'),
+                    volumeDisplay: document.getElementById('volumeDisplay'),
+                    sensitivityDisplay: document.getElementById('sensitivityDisplay'),
+                    waveBars: document.getElementById('waveBars')
+                };
+            }
+
+            createVisualizationBars() {
+                for (let i = 0; i < 20; i++) {
+                    const bar = document.createElement('div');
+                    bar.className = 'bar';
+                    bar.style.height = '5px';
+                    this.elements.waveBars.appendChild(bar);
+                }
+            }
+
+            setupEventListeners() {
+                this.elements.startButton.addEventListener('click', () => this.toggleEngine());
+                
+                this.elements.volumeSlider.addEventListener('input', (e) => {
+                    this.elements.volumeDisplay.textContent = e.target.value + '%';
+                    this.updateVolume();
+                });
+
+                this.elements.sensitivitySlider.addEventListener('input', (e) => {
+                    this.elements.sensitivityDisplay.textContent = e.target.value;
+                });
+
+                this.elements.engineType.addEventListener('change', () => {
+                    if (this.isRunning) {
+                        this.stopAudio();
+                        this.startAudio();
+                    }
+                });
+            }
+
+            async toggleEngine() {
+                if (!this.isRunning) {
+                    await this.startEngine();
+                } else {
+                    this.stopEngine();
+                }
+            }
+
+            async startEngine() {
+                try {
+                    // Request motion permissions for iOS
+                    if (typeof DeviceMotionEvent.requestPermission === 'function') {
+                        const permission = await DeviceMotionEvent.requestPermission();
+                        if (permission !== 'granted') {
+                            this.elements.status.textContent = 'Motion permission denied';
+                            return;
+                        }
+                    }
+
+                    await this.initializeAudio();
+                    this.startMotionDetection();
+                    this.startAudio();
+                    
+                    this.isRunning = true;
+                    this.elements.startButton.textContent = 'Stop Engine';
+                    this.elements.startButton.classList.add('active');
+                    this.elements.status.textContent = 'Engine running - monitoring acceleration';
+                } catch (error) {
+                    console.error('Error starting engine:', error);
+                    this.elements.status.textContent = 'Error: ' + error.message;
+                }
+            }
+
+            stopEngine() {
+                this.stopMotionDetection();
+                this.stopAudio();
+                
+                this.isRunning = false;
+                this.elements.startButton.textContent = 'Start Engine';
+                this.elements.startButton.classList.remove('active');
+                this.elements.status.textContent = 'Engine stopped';
+                this.currentRPM = 800;
+                this.targetRPM = 800;
+            }
+
+            async initializeAudio() {
+                this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                await this.audioContext.resume();
+            }
+
+            startAudio() {
+                this.stopAudio(); // Clean up any existing audio
+                
+                const engineConfig = this.getEngineConfig();
+                
+                // Create multiple oscillators for richer sound
+                this.oscillators = [];
+                this.gainNodes = [];
+                
+                engineConfig.frequencies.forEach((freq, index) => {
+                    const oscillator = this.audioContext.createOscillator();
+                    const gainNode = this.audioContext.createGain();
+                    
+                    oscillator.type = engineConfig.waveforms[index] || 'sawtooth';
+                    oscillator.frequency.setValueAtTime(freq, this.audioContext.currentTime);
+                    
+                    gainNode.gain.setValueAtTime(engineConfig.gains[index] || 0.1, this.audioContext.currentTime);
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(this.audioContext.destination);
+                    
+                    oscillator.start();
+                    
+                    this.oscillators.push(oscillator);
+                    this.gainNodes.push(gainNode);
+                });
+            }
+
+            stopAudio() {
+                this.oscillators.forEach(osc => {
+                    try {
+                        osc.stop();
+                    } catch (e) {
+                        // Oscillator may already be stopped
+                    }
+                });
+                this.oscillators = [];
+                this.gainNodes = [];
+            }
+
+            getEngineConfig() {
+                const configs = {
+                    v8: {
+                        frequencies: [120, 240, 360, 480],
+                        waveforms: ['sawtooth', 'square', 'triangle', 'sine'],
+                        gains: [0.15, 0.1, 0.05, 0.03]
+                    },
+                    v6: {
+                        frequencies: [150, 300, 450],
+                        waveforms: ['sawtooth', 'triangle', 'sine'],
+                        gains: [0.12, 0.08, 0.04]
+                    },
+                    i4turbo: {
+                        frequencies: [180, 360, 540],
+                        waveforms: ['square', 'sawtooth', 'triangle'],
+                        gains: [0.1, 0.12, 0.06]
+                    },
+                    motorcycle: {
+                        frequencies: [200, 400, 800, 1200],
+                        waveforms: ['sawtooth', 'square', 'triangle', 'sine'],
+                        gains: [0.2, 0.15, 0.08, 0.04]
+                    },
+                    diesel: {
+                        frequencies: [80, 160, 240],
+                        waveforms: ['square', 'sawtooth', 'triangle'],
+                        gains: [0.18, 0.12, 0.06]
+                    }
+                };
+                
+                return configs[this.elements.engineType.value] || configs.v8;
+            }
+
+            startMotionDetection() {
+                window.addEventListener('devicemotion', this.handleMotion.bind(this));
+            }
+
+            stopMotionDetection() {
+                window.removeEventListener('devicemotion', this.handleMotion.bind(this));
+            }
+
+            handleMotion(event) {
+                if (!event.accelerationIncludingGravity) return;
+                
+                const { x, y, z } = event.accelerationIncludingGravity;
+                
+                // Calculate total acceleration magnitude
+                const totalAccel = Math.sqrt(x*x + y*y + z*z);
+                
+                // Smooth the acceleration data
+                this.lastAcceleration.shift();
+                this.lastAcceleration.push(totalAccel);
+                this.smoothedAccel = this.lastAcceleration.reduce((a, b) => a + b) / this.lastAcceleration.length;
+                
+                // Focus on forward/backward acceleration (assuming y-axis)
+                this.acceleration = Math.abs(y || 0);
+                
+                // Apply sensitivity multiplier
+                const sensitivity = parseInt(this.elements.sensitivitySlider.value);
+                this.acceleration *= sensitivity * 0.5;
+                
+                // Calculate target RPM based on acceleration
+                this.calculateTargetRPM();
+            }
+
+            calculateTargetRPM() {
+                const baseRPM = 800;
+                const maxRPM = 6000;
+                
+                // Map acceleration to RPM (more aggressive scaling)
+                const rpmIncrease = Math.min(this.acceleration * 400, maxRPM - baseRPM);
+                this.targetRPM = baseRPM + rpmIncrease;
+                
+                // Ensure minimum idle RPM
+                this.targetRPM = Math.max(this.targetRPM, baseRPM);
+            }
+
+            updateAudioFrequencies() {
+                if (!this.oscillators.length) return;
+                
+                const rpmRatio = this.currentRPM / 800; // Base ratio from idle
+                const engineConfig = this.getEngineConfig();
+                
+                this.oscillators.forEach((oscillator, index) => {
+                    const baseFreq = engineConfig.frequencies[index];
+                    const newFreq = baseFreq * rpmRatio;
+                    
+                    try {
+                        oscillator.frequency.setValueAtTime(newFreq, this.audioContext.currentTime);
+                    } catch (e) {
+                        // Oscillator may be stopped
+                    }
+                });
+            }
+
+            updateVolume() {
+                if (!this.gainNodes.length) return;
+                
+                const volume = parseInt(this.elements.volumeSlider.value) / 100;
+                const engineConfig = this.getEngineConfig();
+                
+                this.gainNodes.forEach((gainNode, index) => {
+                    const baseGain = engineConfig.gains[index];
+                    const newGain = baseGain * volume;
+                    
+                    try {
+                        gainNode.gain.setValueAtTime(newGain, this.audioContext.currentTime);
+                    } catch (e) {
+                        // Gain node may be disconnected
+                    }
+                });
+            }
+
+            updateVisualization() {
+                const bars = this.elements.waveBars.children;
+                const rpmRatio = this.currentRPM / 6000;
+                
+                for (let i = 0; i < bars.length; i++) {
+                    const height = 5 + (Math.random() * rpmRatio * 80) + (this.acceleration * 10);
+                    bars[i].style.height = Math.min(height, 95) + 'px';
+                }
+            }
+
+            animationLoop() {
+                // Smooth RPM transitions
+                const rpmDiff = this.targetRPM - this.currentRPM;
+                this.currentRPM += rpmDiff * 0.1;
+                
+                // Update displays
+                this.elements.accelValue.textContent = this.acceleration.toFixed(1);
+                this.elements.rpmValue.textContent = Math.round(this.currentRPM);
+                
+                if (this.isRunning) {
+                    this.updateAudioFrequencies();
+                    this.updateVisualization();
+                }
+                
+                requestAnimationFrame(() => this.animationLoop());
+            }
+        }
+
+        // Initialize the app when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new TeslaICESoundSimulator();
+        });
+    </script>
+</body>
+</html>
