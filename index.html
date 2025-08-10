@@ -24,236 +24,239 @@
             display: flex;
             flex-direction: column;
             height: 100vh;
-            padding: 20px;
+            padding: 15px;
+            max-width: 100%;
+            overflow-x: hidden;
         }
 
         .header {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
+            flex-shrink: 0;
         }
 
         .title {
-            font-size: 2.5em;
+            font-size: 1.8em;
             font-weight: bold;
             background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
         }
 
         .status {
             color: #888;
-            font-size: 1.1em;
+            font-size: 0.9em;
         }
 
         .main-content {
-            display: flex;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
             flex: 1;
-            gap: 30px;
+            min-height: 0;
         }
 
         .left-panel {
-            flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 20px;
-        }
-
-        .acceleration-display {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: 30px;
-            text-align: center;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .accel-value {
-            font-size: 4em;
-            font-weight: bold;
-            color: #4ecdc4;
-            margin-bottom: 10px;
-        }
-
-        .accel-label {
-            font-size: 1.2em;
-            color: #ccc;
-        }
-
-        .rpm-display {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: 30px;
-            text-align: center;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .rpm-gauge {
-            width: 200px;
-            height: 200px;
-            margin: 0 auto 20px;
-            position: relative;
-            border-radius: 50%;
-            background: conic-gradient(
-                from 0deg,
-                #4ecdc4 0deg,
-                #45b7aa 60deg,
-                #ff6b6b 120deg,
-                #d63031 180deg
-            );
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .rpm-gauge::before {
-            content: '';
-            width: 180px;
-            height: 180px;
-            background: #1a1a1a;
-            border-radius: 50%;
-            position: absolute;
-        }
-
-        .rpm-value {
-            font-size: 2.5em;
-            font-weight: bold;
-            z-index: 1;
-            color: white;
-        }
-
-        .rpm-label {
-            font-size: 1.2em;
-            color: #ccc;
+            gap: 10px;
+            min-height: 0;
         }
 
         .right-panel {
-            flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 10px;
+            min-height: 0;
+        }
+
+        .compact-display {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            flex: 1;
+            min-height: 80px;
+        }
+
+        .compact-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #4ecdc4;
+            margin-bottom: 5px;
+            line-height: 1;
+        }
+
+        .compact-label {
+            font-size: 0.8em;
+            color: #ccc;
+        }
+
+        .dual-display {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
         }
 
         .controls {
             background: rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: 25px;
+            border-radius: 12px;
+            padding: 15px;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
         }
 
         .control-group {
-            margin-bottom: 20px;
+            margin-bottom: 12px;
         }
 
         .control-label {
             display: block;
-            margin-bottom: 10px;
+            margin-bottom: 6px;
             font-weight: 600;
             color: #fff;
+            font-size: 0.9em;
         }
 
         select, input[type="range"] {
             width: 100%;
-            padding: 12px;
-            border-radius: 10px;
+            padding: 8px;
+            border-radius: 8px;
             border: none;
             background: rgba(255, 255, 255, 0.2);
             color: white;
-            font-size: 16px;
-        }
-
-        select option {
-            background: #2a2a2a;
-            color: white;
-        }
-
-        input[type="range"] {
-            height: 6px;
-            background: rgba(255, 255, 255, 0.3);
-            outline: none;
-            padding: 0;
-        }
-
-        input[type="range"]::-webkit-slider-thumb {
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: #4ecdc4;
-            cursor: pointer;
-        }
-
-        .value-display {
-            text-align: right;
-            color: #4ecdc4;
-            font-weight: bold;
+            font-size: 14px;
         }
 
         .start-button {
             background: linear-gradient(45deg, #4ecdc4, #45b7aa);
             border: none;
-            border-radius: 15px;
-            padding: 20px 40px;
-            font-size: 1.3em;
+            border-radius: 12px;
+            padding: 15px 25px;
+            font-size: 1.1em;
             font-weight: bold;
             color: white;
             cursor: pointer;
             transition: all 0.3s ease;
             text-transform: uppercase;
             letter-spacing: 1px;
-        }
-
-        .start-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(78, 205, 196, 0.3);
-        }
-
-        .start-button:active {
-            transform: translateY(0);
-        }
-
-        .start-button.active {
-            background: linear-gradient(45deg, #ff6b6b, #d63031);
+            width: 100%;
+            margin-top: 10px;
         }
 
         .visualization {
             background: rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: 20px;
+            border-radius: 12px;
+            padding: 15px;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             text-align: center;
+            flex: 1;
+            min-height: 100px;
         }
 
         .wave-bars {
             display: flex;
             justify-content: center;
             align-items: end;
-            height: 100px;
-            gap: 3px;
+            height: 60px;
+            gap: 2px;
+            margin-top: 10px;
         }
 
         .bar {
-            width: 8px;
+            width: 6px;
             background: linear-gradient(to top, #4ecdc4, #45b7aa);
-            border-radius: 4px 4px 0 0;
+            border-radius: 3px 3px 0 0;
             transition: height 0.1s ease;
-            min-height: 5px;
+            min-height: 3px;
         }
 
-        @media (max-width: 1200px) {
+        .value-display {
+            text-align: right;
+            color: #4ecdc4;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        /* Tesla-specific responsive adjustments */
+        @media (max-width: 1024px) {
             .main-content {
-                flex-direction: column;
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .dual-display {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 8px;
+            }
+            
+            .compact-value {
+                font-size: 1.5em;
             }
             
             .title {
-                font-size: 2em;
+                font-size: 1.5em;
             }
             
-            .accel-value {
-                font-size: 3em;
+            .container {
+                padding: 10px;
+                height: calc(100vh - 20px);
+            }
+        }
+
+        @media (max-height: 600px) {
+            .container {
+                padding: 8px;
+            }
+            
+            .header {
+                margin-bottom: 8px;
+            }
+            
+            .title {
+                font-size: 1.3em;
+                margin-bottom: 3px;
+            }
+            
+            .status {
+                font-size: 0.8em;
+            }
+            
+            .compact-display {
+                padding: 10px;
+                min-height: 60px;
+            }
+            
+            .compact-value {
+                font-size: 1.3em;
+            }
+            
+            .compact-label {
+                font-size: 0.7em;
+            }
+            
+            .controls {
+                padding: 10px;
+            }
+            
+            .control-group {
+                margin-bottom: 8px;
+            }
+            
+            .start-button {
+                padding: 10px 20px;
+                font-size: 1em;
+            }
+            
+            .wave-bars {
+                height: 40px;
             }
         }
     </style>
@@ -267,28 +270,28 @@
 
         <div class="main-content">
             <div class="left-panel">
-                <div class="acceleration-display">
-                    <div class="accel-value" id="accelValue">0.0</div>
-                    <div class="accel-label">Acceleration (m/s²)</div>
-                </div>
-
-                <div class="acceleration-display">
-                    <div class="accel-value" id="speedValue">0</div>
-                    <div class="accel-label">Speed (mph)</div>
-                </div>
-
-                <div class="rpm-display">
-                    <div class="rpm-gauge">
-                        <div class="rpm-value" id="rpmValue">800</div>
+                <div class="dual-display">
+                    <div class="compact-display">
+                        <div class="compact-value" id="accelValue">0.0</div>
+                        <div class="compact-label">Accel (m/s²)</div>
                     </div>
-                    <div class="rpm-label">Engine RPM</div>
+                    <div class="compact-display">
+                        <div class="compact-value" id="speedValue">0</div>
+                        <div class="compact-label">Speed (mph)</div>
+                    </div>
+                    <div class="compact-display">
+                        <div class="compact-value" id="rpmValue">800</div>
+                        <div class="compact-label">Engine RPM</div>
+                    </div>
+                    <div class="compact-display">
+                        <div class="compact-value" id="gearValue">1</div>
+                        <div class="compact-label">Current Gear</div>
+                    </div>
                 </div>
 
-                <div class="rpm-display">
-                    <div class="rpm-gauge" style="background: conic-gradient(from 0deg, #4ecdc4 0deg, #45b7aa 30deg, #ff6b6b 60deg, #d63031 90deg);">
-                        <div class="rpm-value" id="gearValue">1</div>
-                    </div>
-                    <div class="rpm-label">Current Gear</div>
+                <div class="visualization">
+                    <h3 style="margin-bottom: 5px; font-size: 1em;">Audio Visualization</h3>
+                    <div class="wave-bars" id="waveBars"></div>
                 </div>
             </div>
 
@@ -315,12 +318,15 @@
                         <input type="range" id="sensitivitySlider" min="1" max="10" value="5">
                     </div>
 
-                    <button class="start-button" id="startButton">Start Engine</button>
-                </div>
+                    <div class="control-group">
+                        <label class="control-label">🚗 Manual Accelerator: <span class="value-display" id="acceleratorDisplay">0%</span></label>
+                        <input type="range" id="acceleratorSlider" min="0" max="100" value="0">
+                        <div style="margin-top: 3px; font-size: 0.8em; color: #888;">
+                            Desktop testing mode
+                        </div>
+                    </div>
 
-                <div class="visualization">
-                    <h3 style="margin-bottom: 15px;">Audio Visualization</h3>
-                    <div class="wave-bars" id="waveBars"></div>
+                    <button class="start-button" id="startButton">Start Engine</button>
                 </div>
             </div>
         </div>
@@ -390,15 +396,17 @@
                     sensitivityDisplay: document.getElementById('sensitivityDisplay'),
                     waveBars: document.getElementById('waveBars'),
                     speedValue: document.getElementById('speedValue'),
-                    gearValue: document.getElementById('gearValue')
+                    gearValue: document.getElementById('gearValue'),
+                    acceleratorSlider: document.getElementById('acceleratorSlider'),
+                    acceleratorDisplay: document.getElementById('acceleratorDisplay')
                 };
             }
 
             createVisualizationBars() {
-                for (let i = 0; i < 20; i++) {
+                for (let i = 0; i < 15; i++) {
                     const bar = document.createElement('div');
                     bar.className = 'bar';
-                    bar.style.height = '5px';
+                    bar.style.height = '3px';
                     this.elements.waveBars.appendChild(bar);
                 }
             }
@@ -413,6 +421,10 @@
 
                 this.elements.sensitivitySlider.addEventListener('input', (e) => {
                     this.elements.sensitivityDisplay.textContent = e.target.value;
+                });
+
+                this.elements.acceleratorSlider.addEventListener('input', (e) => {
+                    this.elements.acceleratorDisplay.textContent = e.target.value + '%';
                 });
 
                 this.elements.engineType.addEventListener('change', () => {
@@ -433,12 +445,11 @@
 
             async startEngine() {
                 try {
-                    // Request motion permissions for iOS
+                    // Request motion permissions for iOS (only needed for real motion detection)
                     if (typeof DeviceMotionEvent.requestPermission === 'function') {
                         const permission = await DeviceMotionEvent.requestPermission();
                         if (permission !== 'granted') {
-                            this.elements.status.textContent = 'Motion permission denied';
-                            return;
+                            this.elements.status.textContent = 'Motion permission denied - using manual accelerator';
                         }
                     }
 
@@ -449,7 +460,7 @@
                     this.isRunning = true;
                     this.elements.startButton.textContent = 'Stop Engine';
                     this.elements.startButton.classList.add('active');
-                    this.elements.status.textContent = 'Engine running - monitoring acceleration';
+                    this.elements.status.textContent = 'Engine running - use manual accelerator or motion detection';
                 } catch (error) {
                     console.error('Error starting engine:', error);
                     this.elements.status.textContent = 'Error: ' + error.message;
@@ -478,30 +489,130 @@
                 
                 const engineConfig = this.getEngineConfig();
                 
-                // Create multiple oscillators for richer sound
+                // Create audio processing chain
+                this.createRealisticEngineSound(engineConfig);
+            }
+
+            createRealisticEngineSound(engineConfig) {
                 this.oscillators = [];
                 this.gainNodes = [];
+                this.filters = [];
+                this.noiseNode = null;
                 
-                engineConfig.frequencies.forEach((freq, index) => {
+                // Create main engine harmonics with realistic ratios
+                const baseFreq = engineConfig.baseFrequency;
+                const harmonics = engineConfig.harmonics;
+                
+                // Main engine tone - multiple cylinders firing
+                harmonics.forEach((harmonic, index) => {
                     const oscillator = this.audioContext.createOscillator();
                     const gainNode = this.audioContext.createGain();
+                    const filter = this.audioContext.createBiquadFilter();
                     
-                    oscillator.type = engineConfig.waveforms[index] || 'sawtooth';
-                    oscillator.frequency.setValueAtTime(freq, this.audioContext.currentTime);
+                    // Use more realistic waveforms
+                    oscillator.type = 'sawtooth'; // Sawtooth gives more engine-like harmonics
+                    oscillator.frequency.setValueAtTime(baseFreq * harmonic.ratio, this.audioContext.currentTime);
                     
-                    gainNode.gain.setValueAtTime(engineConfig.gains[index] || 0.1, this.audioContext.currentTime);
+                    // Add slight frequency modulation for realism
+                    const lfoOsc = this.audioContext.createOscillator();
+                    const lfoGain = this.audioContext.createGain();
+                    lfoOsc.type = 'sine';
+                    lfoOsc.frequency.setValueAtTime(0.5 + Math.random() * 2, this.audioContext.currentTime);
+                    lfoGain.gain.setValueAtTime(harmonic.modulation || 2, this.audioContext.currentTime);
                     
-                    oscillator.connect(gainNode);
+                    lfoOsc.connect(lfoGain);
+                    lfoGain.connect(oscillator.frequency);
+                    lfoOsc.start();
+                    
+                    // Filter for engine character
+                    filter.type = 'lowpass';
+                    filter.frequency.setValueAtTime(harmonic.filterFreq || 2000, this.audioContext.currentTime);
+                    filter.Q.setValueAtTime(harmonic.filterQ || 1, this.audioContext.currentTime);
+                    
+                    // Volume envelope
+                    gainNode.gain.setValueAtTime(harmonic.gain * 0.3, this.audioContext.currentTime);
+                    
+                    // Connect the chain
+                    oscillator.connect(filter);
+                    filter.connect(gainNode);
                     gainNode.connect(this.audioContext.destination);
                     
                     oscillator.start();
                     
                     this.oscillators.push(oscillator);
                     this.gainNodes.push(gainNode);
+                    this.filters.push(filter);
                 });
+                
+                // Add engine noise/rumble
+                this.createEngineNoise(engineConfig);
+                
+                // Add exhaust resonance
+                this.createExhaustResonance(engineConfig);
+            }
+
+            createEngineNoise(engineConfig) {
+                // White noise for engine rumble
+                const bufferSize = this.audioContext.sampleRate * 2;
+                const noiseBuffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
+                const output = noiseBuffer.getChannelData(0);
+                
+                // Generate filtered noise
+                for (let i = 0; i < bufferSize; i++) {
+                    output[i] = Math.random() * 2 - 1;
+                }
+                
+                this.noiseNode = this.audioContext.createBufferSource();
+                this.noiseNode.buffer = noiseBuffer;
+                this.noiseNode.loop = true;
+                
+                const noiseGain = this.audioContext.createGain();
+                const noiseFilter = this.audioContext.createBiquadFilter();
+                
+                noiseFilter.type = 'bandpass';
+                noiseFilter.frequency.setValueAtTime(engineConfig.noiseFreq || 150, this.audioContext.currentTime);
+                noiseFilter.Q.setValueAtTime(2, this.audioContext.currentTime);
+                
+                noiseGain.gain.setValueAtTime(engineConfig.noiseGain || 0.05, this.audioContext.currentTime);
+                
+                this.noiseNode.connect(noiseFilter);
+                noiseFilter.connect(noiseGain);
+                noiseGain.connect(this.audioContext.destination);
+                
+                this.noiseNode.start();
+                
+                this.noiseGainNode = noiseGain;
+                this.noiseFilterNode = noiseFilter;
+            }
+
+            createExhaustResonance(engineConfig) {
+                // Sub-harmonic for exhaust rumble
+                const exhaustOsc = this.audioContext.createOscillator();
+                const exhaustGain = this.audioContext.createGain();
+                const exhaustFilter = this.audioContext.createBiquadFilter();
+                
+                exhaustOsc.type = 'triangle';
+                exhaustOsc.frequency.setValueAtTime(engineConfig.baseFrequency * 0.5, this.audioContext.currentTime);
+                
+                exhaustFilter.type = 'lowpass';
+                exhaustFilter.frequency.setValueAtTime(200, this.audioContext.currentTime);
+                exhaustFilter.Q.setValueAtTime(3, this.audioContext.currentTime);
+                
+                exhaustGain.gain.setValueAtTime(engineConfig.exhaustGain || 0.1, this.audioContext.currentTime);
+                
+                exhaustOsc.connect(exhaustFilter);
+                exhaustFilter.connect(exhaustGain);
+                exhaustGain.connect(this.audioContext.destination);
+                
+                exhaustOsc.start();
+                
+                this.exhaustOsc = exhaustOsc;
+                this.exhaustGain = exhaustGain;
+                this.exhaustFilter = exhaustFilter;
             }
 
             stopAudio() {
+                // Stop oscillators
                 this.oscillators.forEach(osc => {
                     try {
                         osc.stop();
@@ -509,44 +620,106 @@
                         // Oscillator may already be stopped
                     }
                 });
+                
+                // Stop noise
+                if (this.noiseNode) {
+                    try {
+                        this.noiseNode.stop();
+                    } catch (e) {
+                        // Node may already be stopped
+                    }
+                }
+                
+                // Stop exhaust
+                if (this.exhaustOsc) {
+                    try {
+                        this.exhaustOsc.stop();
+                    } catch (e) {
+                        // Oscillator may already be stopped
+                    }
+                }
+                
                 this.oscillators = [];
                 this.gainNodes = [];
+                this.filters = [];
+                this.noiseNode = null;
+                this.exhaustOsc = null;
             }
 
             getEngineConfig() {
                 const configs = {
                     v8: {
-                        frequencies: [120, 240, 360, 480],
-                        waveforms: ['sawtooth', 'square', 'triangle', 'sine'],
-                        gains: [0.15, 0.1, 0.05, 0.03],
+                        baseFrequency: 28, // V8 firing frequency at idle
+                        harmonics: [
+                            { ratio: 1, gain: 0.3, modulation: 3, filterFreq: 300, filterQ: 2 },
+                            { ratio: 2, gain: 0.25, modulation: 2, filterFreq: 600, filterQ: 1.5 },
+                            { ratio: 4, gain: 0.2, modulation: 1.5, filterFreq: 1200, filterQ: 1 },
+                            { ratio: 8, gain: 0.15, modulation: 1, filterFreq: 2400, filterQ: 0.8 },
+                            { ratio: 16, gain: 0.08, modulation: 0.5, filterFreq: 4800, filterQ: 0.5 }
+                        ],
+                        noiseFreq: 120,
+                        noiseGain: 0.08,
+                        exhaustGain: 0.15,
                         transmission: 'auto8',
                         finalDrive: 3.23
                     },
                     v6: {
-                        frequencies: [150, 300, 450],
-                        waveforms: ['sawtooth', 'triangle', 'sine'],
-                        gains: [0.12, 0.08, 0.04],
+                        baseFrequency: 21, // V6 firing frequency at idle
+                        harmonics: [
+                            { ratio: 1, gain: 0.28, modulation: 2.5, filterFreq: 280, filterQ: 2.2 },
+                            { ratio: 2, gain: 0.22, modulation: 2, filterFreq: 560, filterQ: 1.8 },
+                            { ratio: 3, gain: 0.18, modulation: 1.8, filterFreq: 840, filterQ: 1.5 },
+                            { ratio: 6, gain: 0.12, modulation: 1.2, filterFreq: 1680, filterQ: 1 },
+                            { ratio: 12, gain: 0.06, modulation: 0.8, filterFreq: 3360, filterQ: 0.6 }
+                        ],
+                        noiseFreq: 150,
+                        noiseGain: 0.06,
+                        exhaustGain: 0.12,
                         transmission: 'manual6',
                         finalDrive: 3.90
                     },
                     i4turbo: {
-                        frequencies: [180, 360, 540],
-                        waveforms: ['square', 'sawtooth', 'triangle'],
-                        gains: [0.1, 0.12, 0.06],
+                        baseFrequency: 14, // I4 firing frequency at idle
+                        harmonics: [
+                            { ratio: 1, gain: 0.25, modulation: 4, filterFreq: 200, filterQ: 2.5 },
+                            { ratio: 2, gain: 0.3, modulation: 3, filterFreq: 400, filterQ: 2 },
+                            { ratio: 4, gain: 0.25, modulation: 2, filterFreq: 800, filterQ: 1.5 },
+                            { ratio: 8, gain: 0.15, modulation: 1.5, filterFreq: 1600, filterQ: 1 },
+                            { ratio: 16, gain: 0.08, modulation: 1, filterFreq: 3200, filterQ: 0.7 }
+                        ],
+                        noiseFreq: 180,
+                        noiseGain: 0.1,
+                        exhaustGain: 0.18,
                         transmission: 'auto8',
                         finalDrive: 3.55
                     },
                     motorcycle: {
-                        frequencies: [200, 400, 800, 1200],
-                        waveforms: ['sawtooth', 'square', 'triangle', 'sine'],
-                        gains: [0.2, 0.15, 0.08, 0.04],
+                        baseFrequency: 14, // Single or twin cylinder
+                        harmonics: [
+                            { ratio: 1, gain: 0.35, modulation: 5, filterFreq: 150, filterQ: 3 },
+                            { ratio: 2, gain: 0.4, modulation: 4, filterFreq: 300, filterQ: 2.5 },
+                            { ratio: 3, gain: 0.3, modulation: 3, filterFreq: 450, filterQ: 2 },
+                            { ratio: 4, gain: 0.25, modulation: 2, filterFreq: 600, filterQ: 1.5 },
+                            { ratio: 8, gain: 0.15, modulation: 1, filterFreq: 1200, filterQ: 1 }
+                        ],
+                        noiseFreq: 200,
+                        noiseGain: 0.12,
+                        exhaustGain: 0.25,
                         transmission: 'motorcycle6',
                         finalDrive: 2.65
                     },
                     diesel: {
-                        frequencies: [80, 160, 240],
-                        waveforms: ['square', 'sawtooth', 'triangle'],
-                        gains: [0.18, 0.12, 0.06],
+                        baseFrequency: 21, // Diesel knock frequency
+                        harmonics: [
+                            { ratio: 1, gain: 0.4, modulation: 6, filterFreq: 80, filterQ: 4 },
+                            { ratio: 1.5, gain: 0.35, modulation: 5, filterFreq: 120, filterQ: 3 },
+                            { ratio: 2, gain: 0.3, modulation: 4, filterFreq: 160, filterQ: 2.5 },
+                            { ratio: 3, gain: 0.2, modulation: 3, filterFreq: 240, filterQ: 2 },
+                            { ratio: 4, gain: 0.1, modulation: 2, filterFreq: 320, filterQ: 1.5 }
+                        ],
+                        noiseFreq: 100,
+                        noiseGain: 0.15,
+                        exhaustGain: 0.2,
                         transmission: 'truck6',
                         finalDrive: 4.10
                     }
@@ -564,6 +737,18 @@
             }
 
             handleMotion(event) {
+                // Check if manual accelerator is being used
+                const manualAccelValue = parseInt(this.elements.acceleratorSlider.value);
+                
+                if (manualAccelValue > 0) {
+                    // Use manual accelerator input (desktop testing mode)
+                    this.acceleration = (manualAccelValue / 100) * 10; // Scale to reasonable acceleration range
+                    this.updateSpeed();
+                    this.calculateTransmissionState();
+                    return;
+                }
+                
+                // Otherwise use device motion (Tesla mode)
                 if (!event.accelerationIncludingGravity) return;
                 
                 const { x, y, z } = event.accelerationIncludingGravity;
@@ -725,8 +910,10 @@
                 const rpmRatio = this.currentRPM / 800; // Base ratio from idle
                 const engineConfig = this.getEngineConfig();
                 
+                // Update main harmonic oscillators
                 this.oscillators.forEach((oscillator, index) => {
-                    const baseFreq = engineConfig.frequencies[index];
+                    const harmonic = engineConfig.harmonics[index];
+                    const baseFreq = engineConfig.baseFrequency * harmonic.ratio;
                     const newFreq = baseFreq * rpmRatio;
                     
                     try {
@@ -735,6 +922,38 @@
                         // Oscillator may be stopped
                     }
                 });
+                
+                // Update filters based on RPM for dynamic sound character
+                this.filters.forEach((filter, index) => {
+                    const harmonic = engineConfig.harmonics[index];
+                    const newFilterFreq = harmonic.filterFreq * (0.5 + rpmRatio * 0.8);
+                    
+                    try {
+                        filter.frequency.setValueAtTime(newFilterFreq, this.audioContext.currentTime);
+                    } catch (e) {
+                        // Filter may be disconnected
+                    }
+                });
+                
+                // Update noise characteristics
+                if (this.noiseFilterNode) {
+                    const newNoiseFreq = engineConfig.noiseFreq * (0.8 + rpmRatio * 0.4);
+                    try {
+                        this.noiseFilterNode.frequency.setValueAtTime(newNoiseFreq, this.audioContext.currentTime);
+                    } catch (e) {
+                        // Node may be stopped
+                    }
+                }
+                
+                // Update exhaust resonance
+                if (this.exhaustOsc) {
+                    const newExhaustFreq = engineConfig.baseFrequency * 0.5 * rpmRatio;
+                    try {
+                        this.exhaustOsc.frequency.setValueAtTime(newExhaustFreq, this.audioContext.currentTime);
+                    } catch (e) {
+                        // Oscillator may be stopped
+                    }
+                }
             }
 
             updateVolume() {
@@ -743,9 +962,10 @@
                 const volume = parseInt(this.elements.volumeSlider.value) / 100;
                 const engineConfig = this.getEngineConfig();
                 
+                // Update main harmonic gains
                 this.gainNodes.forEach((gainNode, index) => {
-                    const baseGain = engineConfig.gains[index];
-                    const newGain = baseGain * volume;
+                    const harmonic = engineConfig.harmonics[index];
+                    const newGain = harmonic.gain * volume * 0.3; // Scale down for comfort
                     
                     try {
                         gainNode.gain.setValueAtTime(newGain, this.audioContext.currentTime);
@@ -753,6 +973,24 @@
                         // Gain node may be disconnected
                     }
                 });
+                
+                // Update noise volume
+                if (this.noiseGainNode) {
+                    try {
+                        this.noiseGainNode.gain.setValueAtTime(engineConfig.noiseGain * volume, this.audioContext.currentTime);
+                    } catch (e) {
+                        // Node may be disconnected
+                    }
+                }
+                
+                // Update exhaust volume
+                if (this.exhaustGain) {
+                    try {
+                        this.exhaustGain.gain.setValueAtTime(engineConfig.exhaustGain * volume, this.audioContext.currentTime);
+                    } catch (e) {
+                        // Node may be disconnected
+                    }
+                }
             }
 
             updateVisualization() {
@@ -760,12 +998,25 @@
                 const rpmRatio = this.currentRPM / 6000;
                 
                 for (let i = 0; i < bars.length; i++) {
-                    const height = 5 + (Math.random() * rpmRatio * 80) + (this.acceleration * 10);
-                    bars[i].style.height = Math.min(height, 95) + 'px';
+                    const height = 3 + (Math.random() * rpmRatio * 40) + (this.acceleration * 5);
+                    bars[i].style.height = Math.min(height, 50) + 'px';
                 }
             }
 
             animationLoop() {
+                // Handle manual accelerator mode even when motion events aren't firing
+                const manualAccelValue = parseInt(this.elements.acceleratorSlider.value);
+                if (this.isRunning && manualAccelValue > 0) {
+                    this.acceleration = (manualAccelValue / 100) * 10;
+                    this.updateSpeed();
+                    this.calculateTransmissionState();
+                } else if (this.isRunning && manualAccelValue === 0) {
+                    // When manual accelerator is at 0, simulate engine braking/deceleration
+                    this.acceleration = 0;
+                    this.updateSpeed();
+                    this.calculateTransmissionState();
+                }
+                
                 // Smooth RPM transitions
                 const rpmDiff = this.targetRPM - this.currentRPM;
                 this.currentRPM += rpmDiff * 0.1;
